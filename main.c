@@ -10,37 +10,60 @@ const int SCREEN_HEIGHT = 800;
 
 int main(int argc, char* args[]) {
   SDL_Window* window = NULL;
-	
-  SDL_Surface* screenSurface = NULL;
 
+  window = SDL_CreateWindow
+    ("",
+     SDL_WINDOWPOS_CENTERED,
+     SDL_WINDOWPOS_CENTERED,
+     SCREEN_WIDTH,
+     SCREEN_HEIGHT,
+     0);
+  
+  SDL_Renderer* renderer = NULL;
+  renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+  if (renderer) {
+    printf("renderer created!\n");
+  } else {
+    printf(SDL_GetError());
+  }
+			      
   Domino* dom_set = create_domino_set();
 
-  // for (int i=0; i < sizeof(dom_set); i++) {
-  //  printf("top : %d\t | bottom : %d\n", dom_set[i].top, dom_set[i].bottom);
-  //}
+  dom_set[0].dstrect.x = 100;
+  dom_set[0].dstrect.y = 100;
+  dom_set[0].dstrect.w = 50;
+  dom_set[0].dstrect.h = 70;
+
+  draw_top_domino_pips(dom_set);
+  draw_bottom_domino_pips(dom_set);
   
-  if( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
-    printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
-  } else {
-    window = SDL_CreateWindow( "Dominoes", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    if(window == NULL) {
-      printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError());
-    } else {
-      screenSurface = SDL_GetWindowSurface( window );
+  bool is_running = true;
 
-      //Fill the surface white
-      SDL_FillRect( screenSurface, NULL, SDL_MapRGB( screenSurface->format, 0x00, 0x00, 0x00 ) );
-			
-      //Update the surface
-      SDL_UpdateWindowSurface( window );
-            
-      //Hack to get window to stay up
-      SDL_Event e; bool quit = false; while( quit == false ){ while( SDL_PollEvent( &e ) ){ if( e.type == SDL_QUIT ) quit = true;} }
+  while (is_running) {
+    SDL_Event event;
+
+    while(SDL_PollEvent(&event)) {
+      if (event.type == SDL_QUIT) {
+	is_running = false;
+      }
     }
-  }
 
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+    
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+    render_domino(renderer, &dom_set[0].dstrect, &dom_set[0].pips);
+
+    //SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    //render_domino(renderer, &dom_set[1].dstrect, &dom_set[1].pips);
+    
+    SDL_RenderPresent(renderer);    
+  }
+  
   //Destroy window
-  SDL_DestroyWindow( window );
+  SDL_DestroyWindow(window);
 
   //Quit SDL subsystems
   SDL_Quit();
