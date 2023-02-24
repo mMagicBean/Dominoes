@@ -29,36 +29,48 @@ int main(int argc, char* args[]) {
   }
 			      
   Domino* dom_set = create_domino_set();
-
+  
   dom_set[0].dstrect.x = 100;
   dom_set[0].dstrect.y = 100;
   dom_set[0].dstrect.w = 50;
   dom_set[0].dstrect.h = 70;
-
-  draw_top_domino_pips(dom_set);
-  draw_bottom_domino_pips(dom_set);
   
-  bool is_running = true;
+  dom_set[1].dstrect.x = 200;
+  dom_set[1].dstrect.y = 200;
+  dom_set[1].dstrect.w = 50;
+  dom_set[1].dstrect.h = 70;
 
+  dom_set[2].dstrect.x = 400;
+  dom_set[2].dstrect.y = 400;
+  dom_set[2].dstrect.w = 50;
+  dom_set[2].dstrect.h = 70;
+  
+  create_domino_pips(dom_set);
+
+  bool is_running = true;
+  
   while (is_running) {
     SDL_Event event;
+    //SDL_GetMouseState(&x, &y);
 
     while(SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
-	is_running = false;
+	is_running = false;	
       }
     }
-
+    
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
-    
+
+    // white
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-    render_domino(renderer, &dom_set[0].dstrect, &dom_set[0].pips);
-
-    //SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    //render_domino(renderer, &dom_set[1].dstrect, &dom_set[1].pips);
-    
+    for (int i=0; i < 6; i++) {
+      render_domino(renderer, &dom_set[i].dstrect);
+      render_pips(renderer, dom_set[i].pips);
+    }
+      
+    handle_mouse(dom_set, event);
     SDL_RenderPresent(renderer);    
   }
   
@@ -70,3 +82,4 @@ int main(int argc, char* args[]) {
 
   return 0;
 }
+

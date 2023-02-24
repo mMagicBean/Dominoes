@@ -4,7 +4,6 @@
 
 #define MAX_PIPS 12
 
-
 typedef struct {
   int top, bottom;
 
@@ -17,8 +16,8 @@ typedef struct {
 
 
 Domino* create_domino_set();
-void draw_top_domino_pips(Domino* d);
-void draw_bottom_domino_pips(Domino* d);
-void render_domino(SDL_Renderer* r, const SDL_Rect* tile_rect, SDL_Rect pip_rects[]); 
-
-
+void create_domino_pips(Domino* d);
+void render_domino(SDL_Renderer* r, SDL_Rect tile_rect[]);
+void render_pips(SDL_Renderer* r, SDL_Rect pip_rects[]);
+int* grab_rand_domino(Domino* d);
+void handle_mouse(Domino* d, SDL_Event event);
