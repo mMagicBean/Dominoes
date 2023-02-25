@@ -29,22 +29,9 @@ int main(int argc, char* args[]) {
   }
 			      
   Domino* dom_set = create_domino_set();
-  
-  dom_set[0].dstrect.x = 100;
-  dom_set[0].dstrect.y = 100;
-  dom_set[0].dstrect.w = 50;
-  dom_set[0].dstrect.h = 70;
-  
-  dom_set[1].dstrect.x = 200;
-  dom_set[1].dstrect.y = 200;
-  dom_set[1].dstrect.w = 50;
-  dom_set[1].dstrect.h = 70;
 
-  dom_set[2].dstrect.x = 400;
-  dom_set[2].dstrect.y = 400;
-  dom_set[2].dstrect.w = 50;
-  dom_set[2].dstrect.h = 70;
-  
+  dom_set = setup_player_hand(dom_set, 6);
+
   create_domino_pips(dom_set);
 
   bool is_running = true;
