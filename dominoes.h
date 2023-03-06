@@ -9,13 +9,14 @@ typedef struct {
   int top, bottom;
   SDL_Rect dstrect;
   SDL_Rect pips[MAX_PIPS];
-  SDL_Texture* tile_img;
+  SDL_Texture* tile_tex;
   bool can_grab;
+  SDL_RendererFlip flip;
 }Domino;
 
 
 Domino* create_domino_set(int set);
-void create_domino_pips(Domino* d);
-void render_domino(SDL_Renderer* r, SDL_Rect tile_rect[]);
-void render_pips(SDL_Renderer* r, SDL_Rect pip_rects[]);
-int* grab_rand_domino();
+void setup_player_hand(Domino* player_hand);
+void get_domino_pips(SDL_Renderer* r, Domino* d);
+void render_domino(SDL_Renderer* r, SDL_Texture* tex, SDL_Rect tile_rect[], SDL_RendererFlip flip);
+void free_domino_set(Domino* d);
