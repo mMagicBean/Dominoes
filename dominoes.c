@@ -7,7 +7,6 @@
 
 
 Domino* create_domino_set(int set) {
-  
   int total_size = 28; // size of 6x6 domino tile set
  
   Domino* d = malloc(total_size * sizeof(Domino));
@@ -19,7 +18,7 @@ Domino* create_domino_set(int set) {
       d[index].top    = i;
       d[index].bottom = j;
 
-      d[index].flip = SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL;
+      d[index].flip = SDL_FLIP_NONE;
       index++;
     }
   }
@@ -29,8 +28,8 @@ Domino* create_domino_set(int set) {
   for (int i = 0; i <= set; i++) {
     offset += 50;
 
-    d[i].dstrect.x = 0;
-    d[i].dstrect.y = 0;
+    d[i].dstrect.x = offset;
+    d[i].dstrect.y = 600;
     d[i].dstrect.w = 50;
     d[i].dstrect.h = 70;
   }
@@ -42,26 +41,27 @@ Domino* create_domino_set(int set) {
   return d;
 }
 
-int rand_num() {
-  int lower = 0, upper = 27;
+/*
+void shuffle_domino_set(Domino* d, int n) {
+  srand((unsigned)time(NULL));
   
-  int rnum = (rand() % (upper - lower + 1)) + lower;
-
-  return rnum;
+  for (int i=0; i < n - 1 ; i++) {
+    size_t j = i + rand() / (RAND_MAX / (n - i) + 1);
+    int t = d[j]; // tmp value 
+    d[j] = d[i];
+    d[i] = t;
+  }
 }
+*/
 
 void setup_player_hand(Domino* dom_set, Domino* player_hand, int size) {
-  int rnum = 0;
-  
-  for (int i=0; i < size; i++) {
-    rnum = rand_num();
-    player_hand[i] = dom_set[rnum];
-    printf("rnum = %d\n", rnum);
-  } 
+  for(int i=0; i < size; i++) {
+    player_hand[i] = dom_set[i];
+  }
 }
 
 void get_domino_pips(SDL_Renderer* r, Domino* d) {
-  for (int i=0; i <= 12; i++) {
+  for (int i=0; i <= 12; i++) {  
     // 6x6 tile
     if (d[i].top == 6 && d[i].bottom == 6) {
       SDL_Surface* image = SDL_LoadBMP("Assets/6x6.bmp");
@@ -160,7 +160,7 @@ void get_domino_pips(SDL_Renderer* r, Domino* d) {
       continue;
     }
 
-    // 4 x 3 tile
+    // 4x3 tile
     if (d[i].top == 4 && d[i].bottom == 3) {
       SDL_Surface* image = SDL_LoadBMP("Assets/4x3.bmp");
       d[i].tile_tex = SDL_CreateTextureFromSurface(r, image);
@@ -259,13 +259,8 @@ void get_domino_pips(SDL_Renderer* r, Domino* d) {
     }
   }
 }
-
+ 
 void render_domino(SDL_Renderer* r, SDL_Texture* tex, SDL_Rect tile_rect[], SDL_RendererFlip flip) {
   SDL_RenderCopyEx(r, tex, NULL, tile_rect, 0.0f, NULL, flip);
 }
 
-
-void free_domino_set(Domino* d) {
-
-
-}

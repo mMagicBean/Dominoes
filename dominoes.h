@@ -16,6 +16,8 @@ typedef struct {
 
 
 Domino* create_domino_set(int set);
+void shuffle_domino_set(Domino* d, int n);
+int rand_num(int lower, int upper);
 void setup_player_hand(Domino* player_hand);
 void get_domino_pips(SDL_Renderer* r, Domino* d);
 void render_domino(SDL_Renderer* r, SDL_Texture* tex, SDL_Rect tile_rect[], SDL_RendererFlip flip);

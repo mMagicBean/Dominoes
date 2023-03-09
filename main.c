@@ -5,13 +5,17 @@
 #include "dominoes.h"
 #include <stdlib.h>
 #include <time.h>
+#include "game.h"
 
 const int SCREEN_WIDTH = 1000;
 const int SCREEN_HEIGHT = 800;
 
+
 int main(int argc, char* args[]) {
   SDL_Window* window = NULL;
 
+  float fps;
+  
   window = SDL_CreateWindow
     ("",
      SDL_WINDOWPOS_CENTERED,
@@ -30,9 +34,13 @@ int main(int argc, char* args[]) {
   }
 
   Domino* domino_set = create_domino_set(27);
+  //shuffle_domino_set(domino_set, 27);
+  
   Domino player_hand[6];
   
   setup_player_hand(domino_set, player_hand, 6);
+
+  Board board = create_board();
   
   int center_x = player_hand[0].dstrect.w / 2;
   int center_y = player_hand[0].dstrect.h / 2;
@@ -41,18 +49,18 @@ int main(int argc, char* args[]) {
   
   int curr_dom_index = 0;
 
-  bool flip_switch[2] = {true, false};
-
   get_domino_pips(renderer, player_hand);
-  
+
   srand(time(NULL));
 
+  int flip_index = 0;
+
   bool is_running = true;
+  
   while (is_running) {
     uint32_t time = SDL_GetTicks();
     uint32_t frame_time;
-    float fps;
-    
+        
     SDL_Event event;
     
     while(SDL_PollEvent(&event)) {
@@ -91,8 +99,24 @@ int main(int argc, char* args[]) {
 	}
       }
 
-      if (SDL_BUTTON_RIGHT == event.button.button) {
-	player_hand[curr_dom_index].flip = SDL_FLIP_HORIZONTAL;
+      if (SDL_MOUSEBUTTONDOWN == event.type) {
+	if (SDL_BUTTON_RIGHT == event.button.button) {
+	  printf("index = %d\n", flip_index);
+	  
+	  if (flip_index == 0) {
+	    player_hand[curr_dom_index].flip = SDL_FLIP_VERTICAL;
+	  }
+
+	  if (flip_index == 1) {
+	    player_hand[curr_dom_index].flip = SDL_FLIP_NONE;
+	  }
+
+	  flip_index++;
+	  
+	  if (flip_index > 1) {
+	    flip_index = 0;
+	  }
+	}
       }
     }
     
@@ -103,16 +127,18 @@ int main(int argc, char* args[]) {
       render_domino(renderer, player_hand[i].tile_tex, &player_hand[i].dstrect, player_hand[i].flip);
     }
 
+    Outline outline = create_and_draw_outline(renderer, &board);
+    detect_move_made(&outline, &board, &player_hand, curr_dom_index);
+    
     SDL_RenderPresent(renderer);
-
+    
     if ((SDL_GetTicks() - time) < 10) {
       SDL_Delay(10);
     }
-
+    
     frame_time = SDL_GetTicks()-time;
     fps = (frame_time > 0) ? 1000.0f / frame_time : 0.0f;
-
-    printf("fps: %f\n", fps);
+    //printf("fps = %f\n", fps);
   }
   
   SDL_DestroyWindow(window);
